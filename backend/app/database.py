@@ -1,6 +1,10 @@
 # backend/app/database.py
 from sqlalchemy import create_engine
+<<<<<<< HEAD
 from sqlalchemy.orm import declarative_base
+=======
+from sqlalchemy.ext.declarative import declarative_base
+>>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
 from sqlalchemy.orm import sessionmaker
 
 # URL de conexión para SQLite. El archivo se creará en el directorio raíz del backend.

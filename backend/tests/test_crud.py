@@ -1,5 +1,9 @@
 from app import crud, schemas
+<<<<<<< HEAD
 from datetime import datetime, timezone
+=======
+from datetime import datetime
+>>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
 
 def test_create_and_get_funcion(db_session):
     """
@@ -8,7 +12,11 @@ def test_create_and_get_funcion(db_session):
     # 1. Preparación (Arrange)
     funcion_schema = schemas.FuncionCreateSchema(
         nombre_obra="Obra de Prueba",
+<<<<<<< HEAD
         fecha_hora=datetime.now(timezone.utc)
+=======
+        fecha_hora=datetime.utcnow()
+>>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
     )
 
     # 2. Acción (Act)
@@ -31,7 +39,11 @@ def test_add_butaca_to_funcion(db_session):
     Prueba unitaria para verificar que se añade una butaca a una función.
     """
     # 1. Preparación: Crear una función primero
+<<<<<<< HEAD
     funcion_schema = schemas.FuncionCreateSchema(nombre_obra="Función con Butacas", fecha_hora=datetime.now(timezone.utc))
+=======
+    funcion_schema = schemas.FuncionCreateSchema(nombre_obra="Función con Butacas", fecha_hora=datetime.utcnow())
+>>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
     funcion = crud.create_db_funcion(db=db_session, funcion=funcion_schema)
     
     butaca_schema = schemas.PlateaCreateSchema(

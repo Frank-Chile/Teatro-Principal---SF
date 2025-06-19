@@ -3,8 +3,13 @@ from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from sqlalchemy.orm import Session
 
+<<<<<<< HEAD
 from .. import auth, schemas, crud  
 from ..dependencies import get_db
+=======
+from .. import auth, schemas, crud
+from ..dependencies import get_db # Importar la dependencia de la base de datos
+>>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
 
 router = APIRouter(
     prefix="/auth",
@@ -14,7 +19,11 @@ router = APIRouter(
 @router.post("/token", response_model=schemas.Token)
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(), 
+<<<<<<< HEAD
     db: Session = Depends(get_db) 
+=======
+    db: Session = Depends(get_db) # Añadir dependencia de la base de datos
+>>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
 ):
     # La función de autenticación ahora necesita la sesión de la base de datos
     user = auth.authenticate_user(db, form_data.username, form_data.password)
