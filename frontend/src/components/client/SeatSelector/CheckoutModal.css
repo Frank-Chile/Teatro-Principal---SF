@@ -1,0 +1,54 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.payment-form .half-width {
+    display: flex;
+    gap: 15px;
+}
+.payment-form .half-width > div {
+    flex: 1;
+}
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.modal-actions .btn-cancel {
+    background-color: #6c757d;
+}
+.modal-actions .btn-cancel:hover {
+    background-color: #5a6268;
+}
+.modal-actions .btn-confirm {
+    background-color: #28a745;
+}
+.modal-actions .btn-confirm:hover {
+    background-color: #218838;
+}
