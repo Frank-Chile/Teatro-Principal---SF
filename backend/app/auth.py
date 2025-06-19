@@ -1,24 +1,13 @@
-<<<<<<< HEAD
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from typing import Optional
 from datetime import datetime, timedelta, timezone
-=======
-from datetime import datetime, timedelta, timezone
-from typing import Optional
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
->>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from . import crud, schemas, models
-<<<<<<< HEAD
 from .dependencies import get_db
-=======
-from .dependencies import get_db # Importante para obtener la sesión de DB en get_current_user
->>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
 
 # --- Configuración de Seguridad ---
 SECRET_KEY = "UNA_CLAVE_SECRETA_MUY_MUY_SEGURA_PARA_PRODUCCION_CAMBIAR"
@@ -28,7 +17,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 # Duración del token en minutos
 # --- Contexto de Hashing de Contraseñas ---
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-<<<<<<< HEAD
 # --- Clase Personalizada para leer el JWT desde una Cookie HttpOnly ---
 class OAuth2PasswordBearerFromCookie(OAuth2PasswordBearer):
     async def __call__(self, request: Request) -> Optional[str]:
@@ -49,11 +37,6 @@ class OAuth2PasswordBearerFromCookie(OAuth2PasswordBearer):
 
 # Se instancia el nuevo esquema de seguridad personalizado
 oauth2_scheme = OAuth2PasswordBearerFromCookie(tokenUrl="/auth/token")
-=======
-# --- Esquema de Seguridad OAuth2 ---
-# tokenUrl apunta al endpoint de login en auth_router.py
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
->>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
 
 # --- Funciones de Utilidad de Contraseña ---
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -82,11 +65,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 def authenticate_user(db: Session, username: str, password: str) -> Optional[models.User]:
     """
     Busca un usuario en la base de datos y verifica su contraseña.
-<<<<<<< HEAD
     Devuelve el objeto de usuario si es válido, de lo contrario, devuelve None.
-=======
-    Devuelve el objeto de usuario si es válido, de lo contrario, devuelve False.
->>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
     """
     user = crud.get_user_by_username(db, username=username)
     if not user:
@@ -96,19 +75,11 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[mod
     return user
 
 async def get_current_user(
-<<<<<<< HEAD
     token_with_bearer: str = Depends(oauth2_scheme), 
     db: Session = Depends(get_db)
 ) -> schemas.UserSchema:
     """
     Dependencia de FastAPI para obtener el usuario actual a partir de un token JWT desde la cookie.
-=======
-    token: str = Depends(oauth2_scheme), 
-    db: Session = Depends(get_db) # <-- Se inyecta la sesión de la base de datos aquí
-) -> schemas.UserSchema:
-    """
-    Dependencia de FastAPI para obtener el usuario actual a partir de un token JWT.
->>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
     Decodifica el token, extrae el nombre de usuario y busca al usuario en la base de datos.
     """
     credentials_exception = HTTPException(
@@ -116,7 +87,6 @@ async def get_current_user(
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-<<<<<<< HEAD
     
     # El valor de la cookie es "Bearer <token>", así que lo separamos
     parts = token_with_bearer.split()
@@ -124,8 +94,6 @@ async def get_current_user(
         raise credentials_exception
     token = parts[1]
 
-=======
->>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: Optional[str] = payload.get("sub")
@@ -135,10 +103,6 @@ async def get_current_user(
     except JWTError:
         raise credentials_exception
     
-<<<<<<< HEAD
-=======
-    # Busca al usuario en la base de datos real usando la sesión 'db'
->>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
     user = crud.get_user_by_username(db, username=token_data.username)
     
     if user is None:
@@ -148,7 +112,6 @@ async def get_current_user(
     return schemas.UserSchema.model_validate(user)
 
 async def get_current_active_user(
-<<<<<<< HEAD
     current_user: schemas.UserSchema = Depends(get_current_user),
     db: Session = Depends(get_db)
 ) -> schemas.UserSchema:
@@ -157,14 +120,6 @@ async def get_current_active_user(
     Realiza una comprobación fresca contra la base de datos.
     """
     user_in_db = crud.get_user_by_username(db, current_user.username)
-=======
-    current_user: schemas.UserSchema = Depends(get_current_user)
-) -> schemas.UserSchema:
-    """
-    Dependencia que asegura que el usuario obtenido del token no esté deshabilitado.
-    """
-    user_in_db = await get_user_from_db_for_status_check(current_user.username) # Llama a una función asincrónica de ejemplo
->>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
     if user_in_db and user_in_db.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
@@ -189,20 +144,4 @@ async def get_current_client_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Operation not permitted: Requires client role"
         )
-<<<<<<< HEAD
     return current_user
-=======
-    return current_user
-
-# Función auxiliar asíncrona para get_current_active_user si se necesita una nueva sesión
-async def get_user_from_db_for_status_check(username: str):
-    # En una aplicación asíncrona completa con un driver de DB asíncrono,
-    # aquí obtendrías una nueva sesión asíncrona.
-    # Con nuestra configuración síncrona, este paso es más conceptual.
-    # El chequeo principal de 'disabled' se hace en 'get_current_user'.
-    # Dejaremos esta función simple para mantener la estructura.
-    # El `get_current_user` ya valida esto, así que este es un doble chequeo.
-    db = next(get_db())
-    user = crud.get_user_by_username(db, username)
-    return user
->>>>>>> 0fe73801a15485600472cdd6529e410b0789e804

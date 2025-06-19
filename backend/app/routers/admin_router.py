@@ -1,11 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import List, Optional, Union
 from sqlalchemy.orm import Session
-<<<<<<< HEAD
 from sqlalchemy import func, case
-=======
-from sqlalchemy import func
->>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
 
 # Se importan los módulos necesarios de la aplicación
 from .. import crud, schemas, auth, models
@@ -38,7 +34,6 @@ def read_funciones(
     limit: int = 100,
     solo_activas: bool = Query(False, description="Filtrar solo funciones activas")
 ):
-<<<<<<< HEAD
    # Se llama a la nueva función optimizada del CRUD
     results = crud.get_all_funciones_with_counts(db=db, skip=skip, limit=limit)
 
@@ -52,27 +47,6 @@ def read_funciones(
             cantidad_butacas=cant_butacas,
             cantidad_butacas_vendidas=cant_vendidas,
             activa=funcion.activa
-=======
-    """
-    Lee una lista de funciones desde la base de datos.
-    Puede filtrar para mostrar solo las activas.
-    """
-    if solo_activas:
-        db_funciones = crud.get_active_funciones(db=db, limit=limit)
-    else:
-        db_funciones = crud.get_all_funciones(db=db, skip=skip, limit=limit)
-
-    response_list = []
-    for f in db_funciones:
-        vendidas_count = len([b for b in f.butacas if b.vendida])
-        response_list.append(schemas.FuncionListItemSchema(
-            id=f.id,
-            nombre_obra=f.nombre_obra,
-            fecha_hora=f.fecha_hora,
-            cantidad_butacas=len(f.butacas),
-            cantidad_butacas_vendidas=vendidas_count,
-            activa=f.activa
->>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
         ))
     return response_list
 
@@ -337,7 +311,6 @@ def reporte_resumen_ventas_por_tipo(
     funcion_id: Optional[str] = Query(None),
     db: Session = Depends(get_db)
 ):
-<<<<<<< HEAD
     # La base de la consulta para butacas vendidas
     query = db.query(
         # Se usa 'case' para crear etiquetas dinámicas para agrupar
@@ -371,50 +344,4 @@ def reporte_resumen_ventas_por_tipo(
         items=[schemas.VentasPorTipoButaca.model_validate(row) for row in results],
         total_general_vendidas=total_vendidas,
         dinero_total_recaudado_general=total_dinero or 0.0
-=======
-    """
-    Genera un resumen de ventas agrupado por subtipos de butaca.
-    """
-    query = db.query(models.Butaca).filter(models.Butaca.vendida == True)
-    if funcion_id:
-        query = query.filter(models.Butaca.funcion_id == funcion_id)
-    
-    butacas_vendidas = query.all()
-    
-    resumen = {
-        "platea_protocolo": {"cantidad": 0, "dinero": 0.0},
-        "platea_normal": {"cantidad": 0, "dinero": 0.0},
-        "balcon_fumadores": {"cantidad": 0, "dinero": 0.0},
-        "balcon_no_fumadores": {"cantidad": 0, "dinero": 0.0},
-    }
-    
-    for butaca in butacas_vendidas:
-        precio = butaca.precio_final_venta or 0.0
-        if butaca.tipo_butaca == 'platea':
-            if butaca.es_protocolo:
-                resumen["platea_protocolo"]["cantidad"] += 1
-                resumen["platea_protocolo"]["dinero"] += precio
-            else:
-                resumen["platea_normal"]["cantidad"] += 1
-                resumen["platea_normal"]["dinero"] += precio
-        elif butaca.tipo_butaca == 'balcon':
-            if butaca.es_fumadores:
-                resumen["balcon_fumadores"]["cantidad"] += 1
-                resumen["balcon_fumadores"]["dinero"] += precio
-            else:
-                resumen["balcon_no_fumadores"]["cantidad"] += 1
-                resumen["balcon_no_fumadores"]["dinero"] += precio
-
-    items_list = [
-        schemas.VentasPorTipoButaca(tipo="Platea Protocolo", cantidad_vendida=resumen["platea_protocolo"]["cantidad"], dinero_recaudado=resumen["platea_protocolo"]["dinero"]),
-        schemas.VentasPorTipoButaca(tipo="Platea Normal", cantidad_vendida=resumen["platea_normal"]["cantidad"], dinero_recaudado=resumen["platea_normal"]["dinero"]),
-        schemas.VentasPorTipoButaca(tipo="Balcón Fumadores", cantidad_vendida=resumen["balcon_fumadores"]["cantidad"], dinero_recaudado=resumen["balcon_fumadores"]["dinero"]),
-        schemas.VentasPorTipoButaca(tipo="Balcón No Fumadores", cantidad_vendida=resumen["balcon_no_fumadores"]["cantidad"], dinero_recaudado=resumen["balcon_no_fumadores"]["dinero"]),
-    ]
-
-    return schemas.ReporteResumenVentas(
-        items=items_list,
-        total_general_vendidas=len(butacas_vendidas),
-        dinero_total_recaudado_general=sum(b.precio_final_venta or 0.0 for b in butacas_vendidas)
->>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
     )

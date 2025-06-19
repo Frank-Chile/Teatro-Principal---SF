@@ -1,17 +1,9 @@
 # backend/requirements.txt
 fastapi==0.111.0
 uvicorn[standard]==0.29.0
-<<<<<<< HEAD
 pydantic==2.9.2
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 python-multipart==0.0.9
 sqlalchemy==2.0.30
 redis==5.2.1
-=======
-pydantic==2.7.1
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-python-multipart==0.0.9
-sqlalchemy==2.0.30
->>>>>>> 0fe73801a15485600472cdd6529e410b0789e804
