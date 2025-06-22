@@ -40,7 +40,7 @@ function AdminDashboard() {
             <div className="stats-grid">
                 <StatCard title="Funciones Activas" value={stats.funciones_activas} icon={<FaTicketAlt />} color="#3498db" />
                 <StatCard title="Total Entradas Vendidas" value={stats.butacas_vendidas_total} icon={<FaUserCheck />} color="#2ecc71" />
-                <StatCard title="Ingresos Totales" value={`S/ ${stats.ingresos_totales.toFixed(2)}`} icon={<FaDollarSign />} color="#f1c40f" />
+                <StatCard title="Ingresos Totales" value={`$ ${stats.ingresos_totales.toFixed(2)}`} icon={<FaDollarSign />} color="#f1c40f" />
                 <StatCard title="Aforo Promedio" value={`${stats.aforo_promedio}%`} icon={<FaTheaterMasks />} color="#e74c3c" />
             </div>
             <div className="quick-actions">
