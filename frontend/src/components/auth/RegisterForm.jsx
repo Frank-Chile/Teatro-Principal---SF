@@ -44,7 +44,6 @@ function RegisterForm() {
         e.preventDefault();
         setSuccessMessage('');
         
-        // --- CORRECCIÓN: Lógica de Validación Unificada ---
         const newErrors = {};
         if (!formData.username.trim()) newErrors.username = "El nombre de usuario es obligatorio.";
         if (!formData.nombres_apellidos.trim()) newErrors.nombres_apellidos = "Los nombres y apellidos son obligatorios.";
@@ -63,11 +62,9 @@ function RegisterForm() {
         
         setErrors(newErrors);
 
-        // Si se encontró algún error, detener el envío
         if (Object.keys(newErrors).length > 0) {
             return;
         }
-        // --- FIN DE LA VALIDACIÓN ---
 
         setIsSubmitting(true);
         try {
@@ -126,11 +123,21 @@ function RegisterForm() {
                 </div>
 
                 <div className="password-requirements">
-                    <p className={passwordValidations.length ? 'valid' : ''}>✔️ 8+ caracteres</p>
-                    <p className={passwordValidations.uppercase ? 'valid' : ''}>✔️ Mayúscula</p>
-                    <p className={passwordValidations.lowercase ? 'valid' : ''}>✔️ Minúscula</p>
-                    <p className={passwordValidations.number ? 'valid' : ''}>✔️ Número</p>
-                    <p className={passwordValidations.specialChar ? 'valid' : ''}>✔️ Símbolo</p>
+                    <p className={passwordValidations.length ? 'valid' : ''}>
+                        {passwordValidations.length ? '✔️' : '❌'} 8+ caracteres
+                    </p>
+                    <p className={passwordValidations.uppercase ? 'valid' : ''}>
+                        {passwordValidations.uppercase ? '✔️' : '❌'} Mayúscula
+                    </p>
+                    <p className={passwordValidations.lowercase ? 'valid' : ''}>
+                        {passwordValidations.lowercase ? '✔️' : '❌'} Minúscula
+                    </p>
+                    <p className={passwordValidations.number ? 'valid' : ''}>
+                        {passwordValidations.number ? '✔️' : '❌'} Número
+                    </p>
+                    <p className={passwordValidations.specialChar ? 'valid' : ''}>
+                        {passwordValidations.specialChar ? '✔️' : '❌'} Símbolo
+                    </p>
                 </div>
                 {errors.password && <p className="error-message">{errors.password}</p>}
 
