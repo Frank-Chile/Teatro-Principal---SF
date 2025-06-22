@@ -1,0 +1,50 @@
+/* frontend/src/components/client/TicketDetailView.css */
+.tickets-list-detail {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.ticket-card-detail {
+    display: flex;
+    align-items: center;
+    background-color: #2b2b2b;
+    border: 1px solid #383838;
+    border-radius: 8px;
+    padding: 15px 20px;
+    transition: background-color 0.2s;
+}
+.ticket-card-detail:hover {
+    background-color: #333;
+}
+
+.ticket-color-indicator {
+    width: 8px;
+    height: 60px;
+    margin-right: 20px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+.ticket-color-indicator.platea { background-color: #a5d6a7; }
+.ticket-color-indicator.balcon { background-color: #90caf9; }
+
+.ticket-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+.ticket-info strong { font-size: 1.2em; color: #ffffff; }
+.ticket-info span { font-size: 0.9em; color: #a0a0a0; margin-top: 4px; }
+
+.ticket-prop-icons {
+    font-size: 1.5em;
+}
+.prop-icon {
+    margin-left: 10px;
+}
+
+.back-button {
+    margin-top: 40px;
+    align-self: flex-start;
+}

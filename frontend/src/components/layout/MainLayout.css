@@ -1,0 +1,13 @@
+/* frontend/src/components/layout/MainLayout.css */
+.app-layout {
+    display: flex;
+}
+
+.main-content {
+    margin-left: 260px; /* Ancho del Sidebar */
+    flex-grow: 1;
+    padding: 40px;
+    height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+}

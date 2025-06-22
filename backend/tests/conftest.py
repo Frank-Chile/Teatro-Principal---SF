@@ -10,6 +10,7 @@ from app.dependencies import get_db
 from app import schemas
 
 # --- Configuración de la Base de Datos de Prueba en Memoria ---
+
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
 engine = create_engine(
@@ -20,6 +21,7 @@ engine = create_engine(
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # --- Fixture para la Sesión de la Base de Datos ---
+
 @pytest.fixture()
 def db_session():
     """
@@ -35,6 +37,7 @@ def db_session():
         Base.metadata.drop_all(bind=engine)
 
 # --- Fixture para el Cliente de API de Prueba ---
+
 @pytest.fixture()
 def client(db_session):
     """
@@ -57,6 +60,7 @@ def client(db_session):
     app.dependency_overrides.clear()
 
 # --- Fixture para Simular un Usuario Admin Autenticado ---
+
 @pytest.fixture
 def admin_auth_client(client):
     """

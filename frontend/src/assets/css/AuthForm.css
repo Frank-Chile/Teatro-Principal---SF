@@ -1,0 +1,220 @@
+/* frontend/src/assets/css/AuthForm.css */
+
+body {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+}
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 80vh;
+}
+
+.auth-form {
+    background-color: #2b2b2b;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 420px;
+    color: #f0f0f0;
+    border-top: 5px solid #c49a44;
+}
+
+.auth-form h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-weight: 300;
+    font-size: 2em;
+}
+
+.input-group,
+.input-group-icon {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.auth-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    color: #a0a0a0;
+}
+
+.input-group-icon .input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+    z-index: 1;
+}
+
+.auth-form input[type="text"],
+.auth-form input[type="password"],
+.auth-form input[type="email"],
+.auth-form input[type="datetime-local"] {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+    font-family: 'Inter', sans-serif;
+    font-size: 1em;
+    padding-left: 40px;
+}
+
+.input-group-icon input {
+    padding-left: 50px;
+}
+
+.auth-form input:focus {
+    outline: none;
+    border-color: #c49a44;
+}
+
+.input-group-checkbox {
+    margin-bottom: 25px;
+    margin-top: 25px;
+}
+
+.input-group-checkbox label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #f0f0f0;
+    font-size: 1em;
+}
+
+.input-group-checkbox input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    accent-color: #c49a44; /* Estilo moderno para el checkbox */
+}
+
+/* Contenedor para los botones de acción en formularios */
+.form-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+/* Estilos de botones genéricos para reutilizar */
+.action-button {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.action-button.primary {
+    background-color: #c49a44;
+    color: #1a1a1a;
+}
+.action-button.primary:hover {
+    background-color: #dcb35b;
+}
+.action-button.secondary {
+    background-color: #4f5b62;
+    color: #f0f0f0;
+}
+.action-button.secondary:hover {
+    background-color: #6c757d;
+}
+.action-button:disabled {
+    background-color: #555;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.password-requirements {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 10px;
+    font-size: 0.8em;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    padding: 10px 5px;
+    color: #a0a0a0;
+}
+.password-requirements p {
+    margin: 4px 0;
+    transition: color 0.3s;
+}
+.password-requirements p.valid {
+    color: #2ecc71; /* Verde */
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.8em;
+    margin-top: 5px;
+}
+
+.error-message.form-error {
+    text-align: center;
+    margin: 15px 0 0 0;
+    font-size: 0.9em;
+}
+
+.success-message {
+    color: #28a745;
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #c49a44;
+    color: #1a1a1a;
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background-color: #dcb35b;
+}
+
+.submit-btn:disabled {
+    background-color: #555;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.redirect-link {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 0.9em;
+}
+
+.redirect-link a {
+    color: #c49a44;
+    text-decoration: none;
+    font-weight: bold;
+}
+.redirect-link a:hover {
+    text-decoration: underline;
+}

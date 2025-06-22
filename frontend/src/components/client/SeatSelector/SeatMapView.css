@@ -1,169 +1,170 @@
-/* src/components/client/SeatSelector/SeatMapView.css */
+/* frontend/src/components/client/SeatSelector/SeatMapView.css */
 .seat-selection-container {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
+    background-color: #2b2b2b;
+    border: 1px solid #383838;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding-bottom: 50px;
 }
 
 .seat-selection-container h2, .seat-selection-container h4 {
     text-align: center;
+    font-weight: 500;
+}
+.seat-selection-container p {
+    text-align: center;
+    color: #a0a0a0;
+    margin-top: 5px;
 }
 
-.seat-map {
+.client-main-layout {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    align-items: flex-start;
+    margin-top: 30px;
+}
+
+.seat-area {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 20px 0;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    overflow-x: auto; /* Para filas muy largas */
+}
+
+.seat-map {
+    display: grid;
+    grid-template-columns: repeat(15, 40px);
+    gap: 15px;
 }
 
 .screen-indicator {
-    width: 80%;
     padding: 10px;
-    margin-bottom: 25px;
-    background-color: #333;
-    color: white;
-    text-align: center;
+    background-color: #808080;
+    color: #f0f0f0;
     font-weight: bold;
-    border-radius: 3px;
-}
-
-.seat-row {
-    display: flex;
-    margin-bottom: 8px;
-    align-items: center;
-}
-
-.row-label {
-    min-width: 60px; 
-    margin-right: 10px;
-    font-size: 0.9em;
-    color: #555;
-    text-align: right;
-}
-
-.seat {
-    width: 35px;
-    height: 35px;
-    margin: 3px;
-    border: 1px solid #ccc;
     border-radius: 5px;
+    text-align: center;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.row-labels-left {
+    padding-top: 65px;
+    flex-shrink: 0;
+}
+
+.label-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-weight: bold;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.platea-label {
+    background-color: #556b2f;
+    width: 25px;
+    height: calc(10 * 55px - 15px); /* 10 filas * (40px butaca + 15px gap) - último gap */
+}
+.balcon-label {
+    background-color: #4682b4;
+    width: 25px;
+    height: calc(5 * 55px - 15px);
+    margin-top: 15px; 
+}
+
+.seat-client {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #555;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.8em;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    box-sizing: border-box; /* Incluye padding y border en el width/height total */
-}
-
-.seat:hover:not(:disabled) {
-    transform: scale(1.1);
-}
-
-.seat.platea.available {
-    background-color: #a5d6a7; /* Verde claro para platea */
-    border-color: #388e3c;
-}
-.seat.platea.available:hover:not(.selected) { /* Evitar que el hover sobreescriba el color de selección */
-    background-color: #81c784;
-}
-
-.seat.balcon.available {
-    background-color: #90caf9; /* Azul claro para balcón */
-    border-color: #1976d2;
-}
-.seat.balcon.available:hover:not(.selected) { /* Evitar que el hover sobreescriba el color de selección */
-    background-color: #64b5f6;
-}
-
-.seat.selected {
-    background-color: #ffca28 !important; /* Amarillo para seleccionada. !important para asegurar que se aplique */
-    border-color: #ffa000 !important;     /* !important para asegurar que se aplique */
     font-weight: bold;
-    /* Podrías añadir una sombra o un borde más grueso para destacar más */
-    /* box-shadow: 0 0 5px 2px #ffa000; */
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    border-radius: 6px;
 }
 
-.seat.sold {
-    background-color: #ef9a9a; /* Rojo claro para vendida */
-    border-color: #d32f2f;
+.seat-client:hover:not(:disabled) {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px #c49a44;
+}
+
+.seat-client.disabled {
+    background-color: #353535; 
+    border-color: #383838;
+    cursor: default;
+    color: transparent; 
+}
+.seat-client.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.seat-client.platea {background-color: #a5d6a7; color: #1e4620; }
+.seat-client.balcon { background-color: #90caf9; color: #0d47a1; }
+
+.seat-client.selected {
+    background-color: #c49a44 !important; 
+    border: 2px solid #f0e68c;
+    box-shadow: 0 0 8px #c49a44;
+    transform: scale(1.1);
+    color: #1a1a1a;
+}
+
+.seat-client.sold {
+    background-color: #ff7575;
+    border-color: #ff7575;
     cursor: not-allowed;
-    color: #7f8c8d;
-}
-.seat.sold:hover { /* Evitar el efecto hover en butacas vendidas */
-    transform: none;
+    color: #ffffff;
 }
 
+.seat-client.protocolo {
+    border: 3px solid #f0e68c;
+    box-shadow: 0 0 8px #c49a44;
+}
+.seat-client.fumadores {
+    border: 3px solid #f0e68c;
+    box-shadow: 0 0 8px #c49a44;
+}
 
-.legend {
+.floating-checkout-bar {
+    position: fixed;
+    bottom: 0;
+    left: 260px; /* Ancho del sidebar */
+    right: 0;
+    background-color: rgba(31, 31, 31, 0.9);
+    backdrop-filter: blur(5px);
+    border-top: 1px solid #383838;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+    padding: 15px 40px;
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-}
-
-.legend-item {
-    display: flex;
+    justify-content: space-between;
     align-items: center;
-    margin: 0 10px 10px 10px;
-    font-size: 0.9em;
+    z-index: 900;
+    animation: slideUp 0.5s ease-out;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.floating-checkout-bar .selection-info strong {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #c49a44;
 }
 
-/* Aplicar estilos específicos a los spans dentro de la leyenda para que coincidan con los botones */
-.legend-item span.seat {
-    width: 20px;
-    height: 20px;
-    margin-right: 5px;
-    cursor: default; 
-    display: inline-block; /* Necesario para que width/height funcionen bien */
-    vertical-align: middle;
-}
-.legend-item span.seat:hover {
-    transform: none;
-}
-/* Aplicar colores de la leyenda directamente a los spans */
-.legend-item span.seat.platea.available {
-    background-color: #a5d6a7;
-    border-color: #388e3c;
-}
-.legend-item span.seat.balcon.available {
-    background-color: #90caf9;
-    border-color: #1976d2;
-}
-.legend-item span.seat.selected {
-    background-color: #ffca28;
-    border-color: #ffa000;
-}
-.legend-item span.seat.sold {
-    background-color: #ef9a9a;
-    border-color: #d32f2f;
-}
-
-
-.checkout-summary {
-    margin-top: 30px;
-    padding: 20px;
-    border: 1px dashed #007bff;
+.floating-checkout-bar button {
+    padding: 12px 35px;
+    font-size: 1.1em;
+    font-weight: bold;
+    background-color: #c49a44;
+    color: #1a1a1a;
+    border: none;
     border-radius: 5px;
-    background-color: #f8f9fa;
-}
-
-.checkout-summary h4 {
-    margin-top: 0;
-}
-.checkout-summary ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-.checkout-summary li {
-    margin-bottom: 5px;
+    cursor: pointer;
 }

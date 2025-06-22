@@ -1,0 +1,21 @@
+/* frontend/src/components/client/SeatSelector/SeatMapSkeleton.css */
+.skeleton-container { pointer-events: none; }
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+.skeleton-item {
+    background-color: #2b2b2b;
+    background-image: linear-gradient(to right, #2b2b2b 0%, #333 20%, #2b2b2b 40%, #2b2b2b 100%);
+    background-repeat: no-repeat;
+    background-size: 2000px 100%;
+    animation: shimmer 2s linear infinite;
+    border-radius: 5px;
+}
+.skeleton-header { width: 60%; height: 3em; margin: 0 auto 20px auto; }
+.skeleton-container .row-labels-left { padding-top: 70px; }
+.skeleton-container .label-box { margin-bottom: 5px; }
+.platea-label-sk { height: calc(10 * 45px - 5px); }
+.balcon-label-sk { height: calc(5 * 45px - 5px); }
+.skeleton-container .screen-indicator { height: 45px; }
+.seat-client-skeleton { width: 40px; height: 40px; }

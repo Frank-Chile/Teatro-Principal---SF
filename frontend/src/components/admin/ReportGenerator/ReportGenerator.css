@@ -1,0 +1,60 @@
+/* frontend/src/components/admin/ReportGenerator/ReportGenerator.css */
+.report-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 20px;
+    padding: 20px;
+    background-color: #2b2b2b;
+    border: 1px solid #383838;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-group label {
+    font-size: 0.8em;
+    color: #a0a0a0;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.control-group select,
+.control-group input {
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: #fff;
+    min-width: 250px;
+    font-size: 0.9em;
+}
+
+.control-group select:focus,
+.control-group input:focus {
+    outline: none;
+    border-color: #c49a44;
+}
+
+.generate-btn {
+    margin-bottom: 0; /* Para alinear con los inputs */
+}
+
+.report-view-wrapper {
+    margin-top: 20px;
+    padding: 25px;
+    background-color: #2b2b2b;
+    border: 1px solid #383838;
+    border-radius: 8px;
+}
+
+.control-group input.no-spinners::-webkit-outer-spin-button,
+.control-group input.no-spinners::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

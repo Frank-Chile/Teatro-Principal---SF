@@ -1,0 +1,30 @@
+/* frontend/src/components/admin/StatCard.css */
+.stat-card {
+    background-color: #2b2b2b;
+    border: 1px solid #383838;
+    border-left: 5px solid #c49a44; /* Color por defecto */
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-card-info .stat-card-title {
+    margin: 0;
+    font-size: 0.9em;
+    color: #a0a0a0;
+    text-transform: uppercase;
+}
+
+.stat-card-info .stat-card-value {
+    margin: 5px 0 0 0;
+    font-size: 2em;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.stat-card-icon {
+    font-size: 3em;
+    opacity: 0.3;
+}

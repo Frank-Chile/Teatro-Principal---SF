@@ -1,0 +1,83 @@
+/* frontend/src/components/admin/ReportGenerator/ReportView.css */
+
+.report-view-wrapper h3 {
+    text-align: center;
+    font-weight: 500;
+    margin-top: 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #383838;
+}
+
+.report-single-object-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.report-single-object-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.report-single-object-list li:last-child {
+    border-bottom: none;
+}
+
+.report-single-object-list strong {
+    color: #a0a0a0;
+}
+
+.report-single-object-list span {
+    font-weight: bold;
+}
+
+.report-summary {
+    margin-top: 30px;
+    border-top: 2px solid #c49a44;
+    padding-top: 20px;
+}
+
+.report-summary h4 {
+    margin-top: 0;
+    text-align: right;
+    color: #a0a0a0;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1em;
+    padding: 8px 0;
+}
+
+.summary-item span {
+    color: #f0f0f0;
+}
+
+.summary-item strong {
+    font-size: 1.2em;
+    color: #ffffff;
+}
+
+th {
+    cursor: pointer;
+    user-select: none; /* Evita que el texto se seleccione al hacer clic */
+    position: relative;
+}
+
+th:hover {
+    background-color: #383838;
+}
+
+.sort-icon {
+    margin-left: 8px;
+    color: #666; /* Color para el icono inactivo */
+    vertical-align: middle;
+}
+
+.sort-icon.active {
+    color: #c49a44; /* Color para el icono activo */
+}

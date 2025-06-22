@@ -1,6 +1,8 @@
+# backend/app/routers/client_router.py
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import List
 from sqlalchemy.orm import Session
+from datetime import timezone
 
 from .. import crud, schemas, auth
 from ..dependencies import get_db
@@ -63,7 +65,7 @@ def comprar_butacas_for_funcion(
             db=db, 
             funcion_id=funcion_id, 
             ids_butacas_a_vender=compra_in.ids_butacas,
-            username_comprador=current_user.username
+            comprador_id=current_user.id
         )
         total_pagado_actual = sum(
             b.precio_final_venta for b in butacas_compradas if b.precio_final_venta is not None
@@ -75,3 +77,33 @@ def comprar_butacas_for_funcion(
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/funciones/{funcion_id}/mis-butacas", response_model=List[schemas.ButacaResponseSchemaUnion])
+def get_my_purchased_butacas_for_funcion(
+    funcion_id: str,
+    current_user: schemas.UserSchema = Depends(auth.get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Devuelve la lista de butacas que el usuario actual ha comprado para esta función.
+    """
+    return crud.get_butacas_compradas_por_usuario(db=db, funcion_id=funcion_id, user_id=current_user.id)
+
+@router.get("/mis-funciones-compradas", response_model=List[schemas.FuncionListItemSchema])
+def get_my_purchased_funciones(
+    current_user: schemas.UserSchema = Depends(auth.get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Devuelve una lista de las funciones para las que el usuario actual ha comprado entradas.
+    """
+    funciones_db = crud.get_funciones_con_entradas_por_usuario(db=db, user_id=current_user.id)
+    
+    response_list = []
+    for f in funciones_db:
+        vendidas_count = len([b for b in f.butacas if b.vendida])
+        response_list.append(schemas.FuncionListItemSchema(
+            id=f.id, nombre_obra=f.nombre_obra, fecha_hora=f.fecha_hora,
+            cantidad_butacas=len(f.butacas), cantidad_butacas_vendidas=vendidas_count, activa=f.activa
+        ))
+    return response_list

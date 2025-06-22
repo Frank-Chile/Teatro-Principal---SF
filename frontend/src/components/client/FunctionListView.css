@@ -1,0 +1,70 @@
+/* frontend/src/components/client/FunctionListView.css */
+.view-container.client-view .view-header {
+    text-align: center;
+    border-bottom: 1px solid #383838;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+.view-container.client-view .view-header p {
+    color: #a0a0a0;
+    font-size: 1.1em;
+    margin: 5px 0 0 0;
+}
+
+.function-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.function-card {
+    background-color: #2b2b2b;
+    border: 1px solid #383838;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.function-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.card-content {
+    padding: 25px;
+    flex-grow: 1;
+}
+
+.card-content h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.5em;
+    font-weight: 500;
+    color: #c49a44;
+}
+
+.card-date {
+    font-size: 0.9em;
+    color: #a0a0a0;
+    margin-bottom: 20px;
+}
+
+.card-stats span {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: #2ecc71;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.card-action {
+    padding: 20px;
+    background-color: #333;
+    border-top: 1px solid #383838;
+}
+
+.card-action .action-button {
+    display: inline-flex;
+    width: auto;
+    padding: 10px 25px;
+}

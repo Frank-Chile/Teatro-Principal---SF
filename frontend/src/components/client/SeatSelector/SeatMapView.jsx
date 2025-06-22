@@ -1,62 +1,87 @@
-// src/components/client/SeatSelector/SeatMapView.jsx
+// frontend/src/components/client/SeatSelector/SeatMapView.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getButacasForFuncionClient, getFuncionDetailsClient, comprarButacasClient } from '../../../services/clientService';
-import CheckoutModal from './CheckoutModal'; // Importar el nuevo modal
-import './SeatMapView.css'; // Asegúrate de que el archivo CSS esté importado
+import CheckoutModal from './CheckoutModal';
+import SeatLegend from '../../common/SeatLegend';
+import SeatMapSkeleton from './SeatMapSkeleton';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './SeatMapView.css';
+
+const SEATS_PER_ROW = 15;
+const PLATEA_ROWS = 10;
+const TOTAL_ROWS = 15;
+
+const generateInitialGrid = () => {
+    const grid = [];
+    for (let i = 1; i <= TOTAL_ROWS; i++) {
+        for (let j = 1; j <= SEATS_PER_ROW; j++) {
+            grid.push({
+                fila: i,
+                numero: j,
+                habilitada: false,
+                tipo_butaca: i <= PLATEA_ROWS ? 'platea' : 'balcon',
+            });
+        }
+    }
+    return grid;
+};
 
 function SeatMapView() {
     const { funcionId } = useParams();
     const navigate = useNavigate();
 
     const [funcion, setFuncion] = useState(null);
-    const [butacas, setButacas] = useState([]);
+    const [butacasGrid, setButacasGrid] = useState(generateInitialGrid());
     const [selectedButacas, setSelectedButacas] = useState(new Set());
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [purchaseError, setPurchaseError] = useState('');
-    const [purchaseSuccess, setPurchaseSuccess] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
     const [isPurchasing, setIsPurchasing] = useState(false);
     const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
-    const fetchFuncionYButacas = useCallback(async () => {
-        setIsLoading(true);
-        setError('');
+    // Se elimina el estado y la llamada a getMyPurchasedButacas
+    const fetchAllData = useCallback(async () => {
         try {
-            const [funcionData, butacasData] = await Promise.all([
+            const [funcionData, habilitadasData] = await Promise.all([
                 getFuncionDetailsClient(funcionId),
-                getButacasForFuncionClient(funcionId)
+                getButacasForFuncionClient(funcionId),
             ]);
+            
             setFuncion(funcionData);
-            setButacas(butacasData);
+
+            const initialGrid = generateInitialGrid();
+            const updatedGrid = initialGrid.map(butacaEnGrilla => {
+                const butacaHabilitada = habilitadasData.find(
+                    b => b.fila === butacaEnGrilla.fila && b.numero === butacaEnGrilla.numero
+                );
+                if (butacaHabilitada) {
+                    return { ...butacaEnGrilla, ...butacaHabilitada, habilitada: true };
+                }
+                return butacaEnGrilla;
+            });
+            setButacasGrid(updatedGrid);
+
         } catch (err) {
-            setError(err.message || 'Error al cargar datos de la función y butacas.');
-            if (err.response?.data?.detail && 
-                (err.response.data.detail.includes("Función no encontrada") || 
-                 err.response.data.detail.includes("no está activa"))){
-                 navigate('/client');
-            } else if (err.response?.status === 404) {
-                navigate('/client');
-            }
+            toast.error(err.message || 'Error al cargar datos de la función.');
         } finally {
             setIsLoading(false);
         }
-    }, [funcionId, navigate]);
+    }, [funcionId]);
 
     useEffect(() => {
-        fetchFuncionYButacas();
-    }, [fetchFuncionYButacas]);
+        fetchAllData();
+    }, [fetchAllData]);
 
-    const toggleButacaSelection = (butacaId) => {
-        const butaca = butacas.find(b => b.id === butacaId);
-        if (butaca && butaca.vendida) return;
+    const toggleButacaSelection = (fila, numero) => {
+        const butaca = butacasGrid.find(b => b.fila === fila && b.numero === numero);
+        if (!butaca || !butaca.id || butaca.vendida) return;
 
         setSelectedButacas(prevSelected => {
             const newSelected = new Set(prevSelected);
-            if (newSelected.has(butacaId)) {
-                newSelected.delete(butacaId);
+            if (newSelected.has(butaca.id)) {
+                newSelected.delete(butaca.id);
             } else {
-                newSelected.add(butacaId);
+                newSelected.add(butaca.id);
             }
             return newSelected;
         });
@@ -65,8 +90,8 @@ function SeatMapView() {
     const calculateTotalPrice = () => {
         let total = 0;
         selectedButacas.forEach(butacaId => {
-            const butaca = butacas.find(b => b.id === butacaId);
-            if (butaca && typeof butaca.precio_base_calculado === 'number') {
+            const butaca = butacasGrid.find(b => b.id === butacaId);
+            if (butaca) {
                 total += butaca.precio_base_calculado;
             }
         });
@@ -75,25 +100,23 @@ function SeatMapView() {
 
     const handleProceedToCheckout = () => {
         if (selectedButacas.size === 0) {
-            setPurchaseError("Por favor, selecciona al menos una butaca.");
+            toast.warn("Por favor, selecciona al menos una butaca.");
             return;
         }
-        setPurchaseError('');
-        setPurchaseSuccess('');
         setShowCheckoutModal(true);
     };
-    
+
     const confirmPurchase = () => {
         setIsPurchasing(true);
         comprarButacasClient(funcionId, Array.from(selectedButacas))
             .then(compraData => {
-                setPurchaseSuccess(`¡Compra Exitosa! Total: $${compraData.total_pagado.toFixed(2)}`);
                 setShowCheckoutModal(false);
-                fetchFuncionYButacas();
+                toast.success('¡Compra Exitosa! Puedes revisar tus entradas en la sección "Mis Entradas".');
+                fetchAllData();
                 setSelectedButacas(new Set());
             })
             .catch(err => {
-                setPurchaseError(err.response?.data?.detail || err.message || "Error en la compra.");
+                toast.error(err.response?.data?.detail || "Error en la compra.");
                 setShowCheckoutModal(false);
             })
             .finally(() => {
@@ -101,19 +124,11 @@ function SeatMapView() {
             });
     };
 
-    const butacasPorFila = butacas.reduce((acc, butaca) => {
-        acc[butaca.fila] = acc[butaca.fila] || [];
-        acc[butaca.fila].push(butaca);
-        acc[butaca.fila].sort((a, b) => a.numero - b.numero);
-        return acc;
-    }, {});
-
-    if (isLoading) return <p>Cargando mapa de butacas...</p>;
-    if (error) return <p className="error-message">{error}</p>;
-    if (!funcion) return <p>Cargando datos de la función...</p>;
-
+    if (isLoading) return <SeatMapSkeleton />;
+    
     return (
         <div className="seat-selection-container">
+            <ToastContainer theme="dark" position="bottom-right" />
             {showCheckoutModal && (
                 <CheckoutModal
                     totalPrice={calculateTotalPrice()}
@@ -123,62 +138,57 @@ function SeatMapView() {
                 />
             )}
 
-            <h2>{funcion.nombre_obra}</h2>
-            <p><strong>Fecha:</strong> {new Date(funcion.fecha_hora).toLocaleString()}</p>
-            {purchaseSuccess && <p style={{color: 'green', fontWeight: 'bold', textAlign: 'center'}}>{purchaseSuccess}</p>}
-            {purchaseError && <p className="error-message" style={{textAlign: 'center'}}>{purchaseError}</p>}
-            <p>Selecciona tus butacas:</p>
+            <h2>{funcion?.nombre_obra}</h2>
+            <p><strong>Fecha:</strong> {new Date(funcion?.fecha_hora).toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short' })}</p>
+            
+            <div className="client-main-layout">
+                <div className="row-labels-left">
+                    <div className="label-box platea-label">Platea</div>
+                    <div className="label-box balcon-label">Balcón</div>
+                </div>
 
-            <div className="seat-map">
-                <div className="screen-indicator">PANTALLA / ESCENARIO</div>
-                {Object.entries(butacasPorFila).sort(([filaA], [filaB]) => parseInt(filaA) - parseInt(filaB)).map(([fila, asientos]) => (
-                    <div key={fila} className="seat-row">
-                        <span className="row-label">Fila {fila}</span>
-                        {asientos.map(butaca => (
-                            <button
-                                key={butaca.id}
-                                className={`
-                                    seat
-                                    ${butaca.tipo_butaca}
-                                    ${butaca.vendida ? 'sold' : 'available'}
-                                    ${selectedButacas.has(butaca.id) ? 'selected' : ''}
-                                `}
-                                onClick={() => toggleButacaSelection(butaca.id)}
-                                disabled={butaca.vendida}
-                                title={`Fila ${butaca.fila}, Asiento ${butaca.numero}\nTipo: ${butaca.tipo_butaca}\nPrecio: $${(butaca.precio_base_calculado || 0).toFixed(2)}${butaca.vendida ? '\n(Vendida)' : ''}`}
-                            >
-                                {butaca.numero}
-                            </button>
-                        ))}
+                <div className="seat-area">
+                    <div className="screen-indicator">ESCENARIO</div>
+                    <div className="seat-map">
+                        {butacasGrid.map((butaca, index) => {
+                            const isSelected = selectedButacas.has(butaca.id);
+                            return (
+                                <button
+                                    key={index}
+                                    className={`
+                                        seat-client
+                                        ${butaca.habilitada ? butaca.tipo_butaca : 'disabled'}
+                                        ${butaca.vendida ? 'sold' : ''}
+                                        ${isSelected ? 'selected' : ''}
+                                        ${butaca.es_protocolo ? 'protocolo' : ''}
+                                        ${butaca.es_fumadores ? 'fumadores' : ''}
+                                    `}
+                                    onClick={() => toggleButacaSelection(butaca.fila, butaca.numero)}
+                                    disabled={!butaca.habilitada || butaca.vendida}
+                                    title={butaca.vendida ? 'Butaca no disponible' : `Fila ${butaca.fila}, Asiento ${butaca.numero}`}
+                                >
+                                    {butaca.habilitada ? butaca.numero : ''}
+                                </button>
+                            );
+                        })}
                     </div>
-                ))}
+                </div>
             </div>
 
-            <div className="legend">
-                <div className="legend-item"><span className="seat platea available"></span> Platea Disponible</div>
-                <div className="legend-item"><span className="seat balcon available"></span> Balcón Disponible</div>
-                <div className="legend-item"><span className="seat selected"></span> Seleccionada</div>
-                <div className="legend-item"><span className="seat sold"></span> Vendida</div>
-            </div>
+            <SeatLegend />
 
             {selectedButacas.size > 0 && (
-                <div className="checkout-summary">
-                    <h4>Resumen de tu Selección:</h4>
-                    <ul>
-                        {Array.from(selectedButacas).map(id => {
-                            const b = butacas.find(but => but.id === id);
-                            return b ? <li key={id}>Fila {b.fila} Asiento {b.numero} (${(b.precio_base_calculado || 0).toFixed(2)})</li> : null;
-                        })}
-                    </ul>
-                    <p><strong>Total a Pagar: ${calculateTotalPrice()}</strong></p>
+                <div className="floating-checkout-bar">
+                    <div className="selection-info">
+                        <span>{selectedButacas.size} butaca(s) seleccionada(s)</span>
+                        <strong>Total: ${calculateTotalPrice()}</strong>
+                    </div>
                     <button onClick={handleProceedToCheckout} disabled={isPurchasing}>
-                        {isPurchasing ? 'Procesando...' : 'Continuar con la Compra'}
+                        Continuar
                     </button>
                 </div>
             )}
-             <button onClick={() => navigate('/client')} style={{marginTop: '20px', backgroundColor: '#6c757d'}}>
-                Volver a Funciones
-            </button>
+            
         </div>
     );
 }

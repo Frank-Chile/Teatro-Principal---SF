@@ -1,0 +1,128 @@
+/* frontend/src/components/client/MyTicketsDashboard.css */
+.view-container.client-view .view-header {
+    text-align: center;
+    border-bottom: 1px solid #383838;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+.view-container.client-view .view-header p {
+    color: #a0a0a0;
+    font-size: 1.1em;
+    margin: 5px 0 0 0;
+}
+
+.function-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.function-ticket-card {
+    background-color: #2b2b2b;
+    border: 1px solid #383838;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+}
+
+.function-ticket-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* CORRECCIÓN: Se usa Flexbox para manejar el título largo */
+.card-header {
+    padding: 20px;
+    border-bottom: 1px solid #444;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Alinea los items arriba */
+    gap: 10px; /* Espacio entre el título y la etiqueta */
+}
+.card-header h3 {
+    margin: 0;
+    font-weight: 500;
+    color: #c49a44;
+    line-height: 1.3; /* Mejora la legibilidad si el título ocupa 2 líneas */
+}
+
+/* --- ESTILOS CORREGIDOS Y MEJORADOS PARA LA ETIQUETA DE ESTADO --- */
+.status-tag {
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap; /* Evita que el texto se parta */
+    flex-shrink: 0; /* Evita que la etiqueta se encoja */
+}
+.status-tag.upcoming {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: #2ecc71; /* Verde */
+}
+.status-tag.finished {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: #e74c3c; /* Rojo */
+}
+
+
+.card-body {
+    padding: 20px;
+    flex-grow: 1;
+}
+.card-body p {
+    text-align: left;
+    margin: 0 0 10px 0;
+    color: #a0a0a0;
+}
+.card-body strong {
+    color: #f0f0f0;
+}
+
+.card-footer {
+    padding: 20px;
+    background-color: #222;
+    border-top: 1px solid #444;
+    text-align: right;
+}
+
+.no-tickets-message {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #2b2b2b;
+    border: 1px dashed #444;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+.no-tickets-message svg {
+    font-size: 3em;
+    color: #666;
+    margin-bottom: 15px;
+}
+.no-tickets-message p {
+    color: #a0a0a0;
+    margin-bottom: 25px;
+}
+
+.action-button.primary {
+    background-color: #c49a44;
+    color: #1a1a1a;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.action-button.secondary {
+    background-color: #c49a44;
+    color: #1a1a1a;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.action-button.secondary:hover {
+    background-color: #c49a44;
+}

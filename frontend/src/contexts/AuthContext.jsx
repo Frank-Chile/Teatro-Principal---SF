@@ -1,4 +1,4 @@
-// src/contexts/AuthContext.jsx
+// frontend/src/contexts/AuthContext.jsx
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { getCurrentUser, logoutUser } from '../services/authService';
 
@@ -13,40 +13,43 @@ export const AuthProvider = ({ children }) => {
 
     const verifyUser = useCallback(async () => {
         try {
-            // Se intenta obtener el usuario. Si la cookie es válida, funcionará.
-            const user = await getCurrentUser(); 
-            // La cookie es válida, el usuario está autenticado.
-            setAuthState({ isAuthenticated: true, user: { username: user.username, rol: user.rol }, isLoading: false });
+            // Se intenta obtener el usuario. Si la cookie es válida, esta llamada funcionará.
+            const user = await getCurrentUser();
+            // Si la llamada tiene éxito, el usuario está autenticado.
+            setAuthState({ isAuthenticated: true, user: user, isLoading: false });
         } catch (error) {
-            // Si falla (ej. 401), significa que no hay cookie válida.
+            // Si la llamada falla (ej. error 401), no hay sesión válida.
             setAuthState({ isAuthenticated: false, user: null, isLoading: false });
         }
     }, []);
 
     useEffect(() => {
-        // Al cargar la aplicación, se verifica si hay una sesión válida
+        // Al cargar la aplicación por primera vez, verificamos si hay una sesión activa.
         verifyUser();
     }, [verifyUser]);
 
     const login = async () => {
-        // Después de un login exitoso desde LoginPage, llamamos a verifyUser
-        // para actualizar el estado global. La cookie ya habrá sido establecida por el backend.
+        // Después de un login exitoso en LoginPage, llamamos a verifyUser.
+        // La cookie ya habrá sido establecida por el backend.
+        // Esto simplemente actualizará el estado del frontend para reflejar el nuevo estado de login.
         await verifyUser();
     };
 
     const logout = async () => {
         try {
-            await logoutUser(); // Llama al endpoint del backend para borrar la cookie
+            // Llama al endpoint del backend para que borre la cookie HttpOnly.
+            await logoutUser();
         } catch (error) {
             console.error("Error en el logout del backend:", error);
         } finally {
-            // Se actualiza el estado del frontend independientemente del resultado del backend
+            // Independientemente del resultado del backend, se limpia el estado del frontend.
             setAuthState({ isAuthenticated: false, user: null, isLoading: false });
         }
     };
 
+    // Muestra un estado de carga global mientras se verifica la sesión inicial.
     if (authState.isLoading) {
-        return <div>Cargando...</div>; // Muestra un estado de carga inicial
+        return <div>Cargando...</div>;
     }
 
     return (

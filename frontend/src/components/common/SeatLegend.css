@@ -1,0 +1,67 @@
+/* frontend/src/components/common/SeatLegend.css */
+.legend-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 25px;
+    padding-top: 50px;
+    border-top: 1px solid #eee;
+    width: 100%;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+}
+
+.legend-swatch {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    border: 1px solid #777;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+
+.legend-swatch.platea-available {
+    background-color: #a5d6a7;
+}
+
+.legend-swatch.balcon-available {
+    background-color: #90caf9;
+}
+
+.legend-swatch.seat-selected {
+    background-color: #c49a44 !important; 
+    border: 2px solid #f0e68c;
+    box-shadow: 0 0 8px #c49a44;
+    transform: scale(1.1);
+    color: #1a1a1a;
+}
+
+.legend-swatch.seat-sold {
+    background-color: #ff7575;
+    border-color: #ff7575;
+}
+
+.legend-swatch.seat-disabled {
+    background-color: #353535;
+    border-color: #555;
+}
+
+.legend-swatch.seat-protocolo {
+    border: 2px solid #f0e68c;
+    box-shadow: 0 0 8px #c49a44;
+    transform: scale(1.1);
+    color: #1a1a1a;
+}
+
+.legend-swatch.seat-fumadores {
+    border: 2px solid #f0e68c;
+    box-shadow: 0 0 8px #c49a44;
+    transform: scale(1.1);
+    color: #1a1a1a;
+}
