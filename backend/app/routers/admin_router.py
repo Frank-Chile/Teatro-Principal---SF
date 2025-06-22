@@ -79,14 +79,10 @@ def update_funcion(funcion_id: str, funcion_in: schemas.FuncionUpdateSchema, db:
 @router.delete("/funciones/{funcion_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_funcion(funcion_id: str, db: Session = Depends(get_db)):
     """
-    Elimina una función de la base de datos, cumpliendo con la HU3. 
+    Endpoint para eliminar una función, cumpliendo con la HU3.
+    Ahora utiliza la lógica de borrado seguro del CRUD.
     """
-    db_funcion = crud.get_funcion_by_id(db=db, funcion_id=funcion_id)
-    if db_funcion is None:
-        raise HTTPException(status_code=404, detail="Función no encontrada para eliminar")
-    
-    db.delete(db_funcion)
-    db.commit()
+    crud.delete_db_funcion(db=db, funcion_id=funcion_id)
     return
 
 # --- Gestión de Butacas ---

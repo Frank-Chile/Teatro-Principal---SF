@@ -23,7 +23,7 @@ class Funcion(Base):
     id: Mapped[str] = mapped_column(String, primary_key=True, index=True)
     nombre_obra: Mapped[str] = mapped_column(String, index=True)
     
-    fecha_hora: Mapped[str] = mapped_column(String)
+    fecha_hora: Mapped[DateTime] = mapped_column(DateTime(timezone=True))
     
     dinero_recaudado_total: Mapped[float] = mapped_column(Float, default=0.0)
     activa: Mapped[bool] = mapped_column(Boolean, default=True)

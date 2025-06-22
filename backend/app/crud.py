@@ -1,5 +1,5 @@
 # backend/app/crud.py
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, subqueryload
 from sqlalchemy import func, case
 from typing import List, Optional
 from fastapi import HTTPException, status
@@ -69,8 +69,6 @@ def get_funciones_con_entradas_por_usuario(db: Session, user_id: int) -> List[mo
 def get_funcion_by_id(db: Session, funcion_id: str) -> Optional[models.Funcion]:
     """Obtiene una función específica por su ID."""
     db_funcion = db.query(models.Funcion).filter(models.Funcion.id == funcion_id).first()
-    if db_funcion and isinstance(db_funcion.fecha_hora, str): # Asegurar que la fecha sea un objeto datetime
-        db_funcion.fecha_hora = datetime.fromisoformat(db_funcion.fecha_hora)
     return db_funcion
 
 def get_all_funciones_with_counts(db: Session, skip: int = 0, limit: int = 100):
@@ -110,27 +108,17 @@ def create_db_funcion(db: Session, funcion: schemas.FuncionCreateSchema) -> mode
     if active_funciones_count >= 10:
         raise HTTPException(status_code=400, detail="Límite de 10 funciones activas alcanzado.")
     
-    # --- LÓGICA DE CORRECCIÓN DE ZONA HORARIA ---
-    # Este bloque ahora maneja correctamente la fecha que viene de Pydantic
-    
-    # 1. El objeto de fecha que llega del schema
     dt = funcion.fecha_hora
     
-    # 2. Definimos nuestra zona horaria de referencia
     peru_tz = pytz.timezone("America/Lima")
 
-    # 3. Comprobamos si la fecha ya es "consciente" de una zona horaria
     if dt.tzinfo is None:
-        # Si es "ingenua" (sin zona horaria), la localizamos a la zona de Perú
         fecha_local_peru = peru_tz.localize(dt)
     else:
-        # Si ya tiene una zona horaria, simplemente la convertimos a la de Perú
         fecha_local_peru = dt.astimezone(peru_tz)
 
-    # 4. Convertimos la fecha (ya correcta para Perú) a UTC para guardarla
     fecha_hora_utc = fecha_local_peru.astimezone(pytz.utc)
 
-    # 5. Comparamos con la hora UTC actual para la validación
     if fecha_hora_utc < datetime.now(pytz.utc):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -140,12 +128,32 @@ def create_db_funcion(db: Session, funcion: schemas.FuncionCreateSchema) -> mode
     db_funcion = models.Funcion(
         id=str(uuid.uuid4()),
         nombre_obra=funcion.nombre_obra,
-        fecha_hora=fecha_hora_utc # Guardamos el objeto datetime correcto en UTC
+        fecha_hora=fecha_hora_utc
     )
     db.add(db_funcion)
     db.commit()
     db.refresh(db_funcion)
     return db_funcion
+
+def delete_db_funcion(db: Session, funcion_id: str) -> bool:
+    """
+    Elimina una función de forma segura. Primero verifica que no tenga
+    butacas vendidas antes de proceder con la eliminación.
+    """
+    db_funcion = db.query(models.Funcion).options(subqueryload(models.Funcion.butacas)).filter(models.Funcion.id == funcion_id).first()
+    
+    if not db_funcion:
+        raise HTTPException(status_code=404, detail="Función no encontrada")
+        
+    if any(butaca.vendida for butaca in db_funcion.butacas):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No se puede eliminar una función que ya tiene entradas vendidas."
+        )
+        
+    db.delete(db_funcion)
+    db.commit()
+    return True
 
 # --- Funciones de "Butaca" ---
 

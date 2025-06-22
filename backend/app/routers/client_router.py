@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy.orm import Session
 from datetime import timezone
 
-from .. import crud, schemas, auth
+from .. import crud, schemas, auth, models
 from ..dependencies import get_db
 
 router = APIRouter(
@@ -12,6 +12,36 @@ router = APIRouter(
     tags=["Client Panel"],
     dependencies=[Depends(auth.get_current_client_user)]
 )
+
+@router.get("/mis-funciones-compradas", response_model=List[schemas.FuncionListItemSchema])
+def get_my_purchased_funciones(
+    current_user: schemas.UserSchema = Depends(auth.get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Devuelve una lista de las funciones para las que el usuario actual ha comprado entradas.
+    """
+    funciones_db = crud.get_funciones_con_entradas_por_usuario(db=db, user_id=current_user.id)
+    
+    response_list = []
+    for f in funciones_db:
+        vendidas_por_usuario_count = db.query(models.Butaca).filter(
+            models.Butaca.funcion_id == f.id,
+            models.Butaca.comprador_id == current_user.id,
+            models.Butaca.vendida == True
+        ).count()
+        
+        total_butacas_count = db.query(models.Butaca).filter(models.Butaca.funcion_id == f.id).count()
+
+        response_list.append(schemas.FuncionListItemSchema(
+            id=f.id,
+            nombre_obra=f.nombre_obra,
+            fecha_hora=f.fecha_hora,
+            cantidad_butacas=total_butacas_count,
+            cantidad_butacas_vendidas=vendidas_por_usuario_count,
+            activa=f.activa
+        ))
+    return response_list
 
 @router.get("/funciones", response_model=List[schemas.FuncionListItemSchema])
 def list_available_funciones_for_client(

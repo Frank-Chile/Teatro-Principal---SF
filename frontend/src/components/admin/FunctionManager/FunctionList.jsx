@@ -76,7 +76,7 @@ function FunctionList() {
                         <tr>
                             <th>Obra</th>
                             <th>Fecha y Hora</th>
-                            <th>Butacas (Habilitadas / Vendidas)</th>
+                            <th>Butacas (Vendidas / Habilitadas)</th>
                             <th>Estado</th>
                             <th className="actions-header">Acciones</th>
                         </tr>
@@ -86,7 +86,7 @@ function FunctionList() {
                             <tr key={funcion.id}>
                                 <td data-label="Obra">{funcion.nombre_obra}</td>
                                 <td data-label="Fecha y Hora">{new Date(funcion.fecha_hora).toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short' })}</td>
-                                <td data-label="Butacas">{funcion.cantidad_butacas} / {funcion.cantidad_butacas_vendidas}</td>
+                                <td data-label="Butacas">{funcion.cantidad_butacas_vendidas} / {funcion.cantidad_butacas}</td>
                                 <td data-label="Estado">
                                     <span className={`status-badge ${funcion.activa ? 'active' : 'inactive'}`}>
                                         {funcion.activa ? 'Activa' : 'Inactiva'}

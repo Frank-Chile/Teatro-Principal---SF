@@ -21,7 +21,7 @@ function RegisterForm() {
         length: false, uppercase: false, lowercase: false,
         number: false, specialChar: false,
     });
-    const [emailError, setEmailError] = useState('');
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -35,40 +35,39 @@ function RegisterForm() {
         });
     }, [formData.password]);
 
-    const validateEmail = (email) => {
-        if (!email) { setEmailError(''); return true; }
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            setEmailError('Por favor, introduce un formato de correo válido.');
-            return false;
-        }
-        setEmailError('');
-        return true;
-    };
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({ ...prevState, [name]: value }));
-        if (name === 'email') {
-            validateEmail(value);
-        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrors({});
         setSuccessMessage('');
-
-        if (!validateEmail(formData.email)) return;
+        
+        // --- CORRECCIÓN: Lógica de Validación Unificada ---
+        const newErrors = {};
+        if (!formData.username.trim()) newErrors.username = "El nombre de usuario es obligatorio.";
+        if (!formData.nombres_apellidos.trim()) newErrors.nombres_apellidos = "Los nombres y apellidos son obligatorios.";
+        if (!formData.email.trim()) {
+            newErrors.email = "El correo electrónico es obligatorio.";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = "El formato del correo no es válido.";
+        }
         if (formData.password !== formData.confirmPassword) {
-            setErrors({ confirmPassword: "Las contraseñas no coinciden." });
+            newErrors.confirmPassword = "Las contraseñas no coinciden.";
+        }
+        const allPasswordReqsMet = Object.values(passwordValidations).every(v => v === true);
+        if (!allPasswordReqsMet) {
+            newErrors.password = "La contraseña no cumple con los requisitos.";
+        }
+        
+        setErrors(newErrors);
+
+        // Si se encontró algún error, detener el envío
+        if (Object.keys(newErrors).length > 0) {
             return;
         }
-        const allValid = Object.values(passwordValidations).every(v => v === true);
-        if (!allValid) {
-            setErrors({ password: "La contraseña no cumple con todos los requisitos de seguridad." });
-            return;
-        }
+        // --- FIN DE LA VALIDACIÓN ---
 
         setIsSubmitting(true);
         try {
@@ -86,16 +85,12 @@ function RegisterForm() {
             }, 3000);
 
         } catch (error) {
-            // --- CORRECCIÓN AQUÍ ---
-            // Se procesa el objeto de error de FastAPI/Pydantic
-            if (error.response && error.response.status === 422 && error.response.data && error.response.data.detail) {
+            if (error.response && error.response.status === 422) {
                 const errorDetail = error.response.data.detail[0];
-                const field = errorDetail.loc[1];
-                const message = errorDetail.msg;
-                setErrors({ form: `Error de validación en el campo '${field}': ${message}` });
+                const errorMessage = `Error en '${errorDetail.loc[1]}': ${errorDetail.msg}`;
+                setErrors({ form: errorMessage });
             } else {
-                // Fallback para otros errores (ej. usuario ya existe)
-                setErrors({ form: error.detail || 'Ocurrió un error durante el registro.' });
+                setErrors({ form: error.detail || 'Ocurrió un error. El usuario o email pueden ya estar en uso.' });
             }
         } finally {
             setIsSubmitting(false);
@@ -111,17 +106,19 @@ function RegisterForm() {
                     <FaUser className="input-icon" />
                     <input type="text" id="username" name="username" placeholder="Nombre de Usuario" value={formData.username} onChange={handleChange} required />
                 </div>
+                {errors.username && <p className="error-message">{errors.username}</p>}
                 
                 <div className="input-group-icon">
                     <FaAddressCard className="input-icon" />
                     <input type="text" id="nombres_apellidos" name="nombres_apellidos" placeholder="Nombres y Apellidos" value={formData.nombres_apellidos} onChange={handleChange} required />
                 </div>
+                {errors.nombres_apellidos && <p className="error-message">{errors.nombres_apellidos}</p>}
 
                 <div className="input-group-icon">
                     <FaEnvelope className="input-icon" />
                     <input type="email" id="email" name="email" placeholder="Correo Electrónico" value={formData.email} onChange={handleChange} required />
                 </div>
-                {emailError && <p className="error-message">{emailError}</p>}
+                {errors.email && <p className="error-message">{errors.email}</p>}
 
                 <div className="input-group-icon">
                     <FaLock className="input-icon" />
@@ -129,25 +126,15 @@ function RegisterForm() {
                 </div>
 
                 <div className="password-requirements">
-                    <p className={passwordValidations.length ? 'valid' : ''}>
-                        {passwordValidations.length ? '✔️' : '❌'} 8+ caracteres
-                    </p>
-                    <p className={passwordValidations.uppercase ? 'valid' : ''}>
-                        {passwordValidations.uppercase ? '✔️' : '❌'} Mayúscula
-                    </p>
-                    <p className={passwordValidations.lowercase ? 'valid' : ''}>
-                        {passwordValidations.lowercase ? '✔️' : '❌'} Minúscula
-                    </p>
-                    <p className={passwordValidations.number ? 'valid' : ''}>
-                        {passwordValidations.number ? '✔️' : '❌'} Número
-                    </p>
-                    <p className={passwordValidations.specialChar ? 'valid' : ''}>
-                        {passwordValidations.specialChar ? '✔️' : '❌'} Símbolo
-                    </p>
+                    <p className={passwordValidations.length ? 'valid' : ''}>✔️ 8+ caracteres</p>
+                    <p className={passwordValidations.uppercase ? 'valid' : ''}>✔️ Mayúscula</p>
+                    <p className={passwordValidations.lowercase ? 'valid' : ''}>✔️ Minúscula</p>
+                    <p className={passwordValidations.number ? 'valid' : ''}>✔️ Número</p>
+                    <p className={passwordValidations.specialChar ? 'valid' : ''}>✔️ Símbolo</p>
                 </div>
                 {errors.password && <p className="error-message">{errors.password}</p>}
 
-                 <div className="input-group-icon">
+                <div className="input-group-icon">
                     <FaLock className="input-icon" />
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirmar Contraseña" value={formData.confirmPassword} onChange={handleChange} required />
                 </div>
